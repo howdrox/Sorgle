@@ -39,13 +39,15 @@
   </style>
 </head>
 <body>
-    <img src="https://via.placeholder.com/100" alt="Profile Photo" class="profile-photo">
+    <img src= "{{ professor.photo_url }}" alt="Profile Photo" class="profile-photo">
     <div class="profile-name">{{ professor.name }}</div>
     <div class="profile-title">{{ professor.title }}</div>
-    <div class="profile-bio">
-      We are so COOOOOKED. COOOOOOOOOOKED BRO!▓▒░(°◡°)░▒▓			
+    <div class="profile-title">{{ professor.curriculum_link }}</div>
+    <div class="profile-title">{{ professor.unit }}</div>
+    <div class="profile-title">{{ professor.functions }}</div>
 
-       </div>
+	
+
   </div>
     <!-- <h1>{{ professor.name }}</h1>
     <h2>{{ professor.title }}</h2> -->
