@@ -108,12 +108,12 @@ class UniSpider(scrapy.Spider):
         # 2) Imperial College London
         # ------------------------------
         elif uni.startswith("Imperial College London"):
-            item['name'] = response.css('h1.hero__header___xfv2U::text').get(default='').strip()
+            item['name'] = response.css('h1.hero__header___xfv2U::text').get(default='-').strip()
             item['title'] = response.css('p.hero__title___qQUiv::text').get(default='').strip()
             item['department'] = response.css('p.userHero__department___KwMvK::text').get(default='').strip()
             item['email'] = response.css('a[href^="mailto:"]::text').get(default='').strip()
-            interests = response.css('div.person-research-interests li::text').getall()
-            item['research_interests'] = [s.strip() for s in interests if s.strip()]
+            research_fields = response.css("div.whiteBox__body___nZQwU ul[aria-label='Fields of Research'] li span::text").getall()
+            item['research_interests'] = [s.strip() for s in research_fields if s.strip()]
 
         # ------------------------------
         # 3) University of Oxford
