@@ -1,0 +1,10 @@
+<h2>Results:</h2>
+{% if results %}
+  <ul>
+    {% for prof in results %}
+      <li>{{ prof[0] }} ({{ prof[1] }}, {{ prof[2] }})</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No results found.</p>
+{% endif %}
