@@ -6,10 +6,8 @@
 import scrapy
 
 class ProfessorItem(scrapy.Item):
-    university = scrapy.Field()
     name = scrapy.Field()
     title = scrapy.Field()
-    department = scrapy.Field()
-    email = scrapy.Field()
-    research_interests = scrapy.Field()
-    profile_url = scrapy.Field()
+    # email = scrapy.Field()
+    # office = scrapy.Field()
+    # bio = scrapy.Field()
