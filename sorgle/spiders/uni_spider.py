@@ -2,7 +2,7 @@
 
 import scrapy
 import json
-from ..items import ProfessorItem
+from ..src.items import ProfessorItem
 
 
 class UniSpider(scrapy.Spider):
@@ -36,21 +36,21 @@ class UniSpider(scrapy.Spider):
     def parse_directory(self, response):
         uni = response.meta['university']
 
-        # # ------------------------------
-        # # 1) Massachusetts Institute of Technology
-        # # ------------------------------
-        # if uni.startswith("Massachusetts Institute of Technology"):
-        #     # directory.mit.edu lists all people alphabetically in <tbody>
-        #     rows = response.css('table.directory-search-results tbody tr')
-        #     for row in rows:
-        #         rel = row.css('td:nth-child(1) a::attr(href)').get()
-        #         if rel:
-        #             # Full URL is already absolute on directory.mit.edu; you can follow it directly
-        #             yield response.follow(
-        #                 rel,
-        #                 callback=self.parse_profile,
-        #                 meta={'university': uni}
-        #             )
+        # ------------------------------
+        # 1) Massachusetts Institute of Technology
+        # ------------------------------
+        if uni.startswith("Massachusetts Institute of Technology"):
+            # directory.mit.edu lists all people alphabetically in <tbody>
+            rows = response.css('table.directory-search-results tbody tr')
+            for row in rows:
+                rel = row.css('td:nth-child(1) a::attr(href)').get()
+                if rel:
+                    # Full URL is already absolute on directory.mit.edu; you can follow it directly
+                    yield response.follow(
+                        rel,
+                        callback=self.parse_profile,
+                        meta={'university': uni}
+                    )
 
         # ------------------------------
         # 2) Imperial College London
