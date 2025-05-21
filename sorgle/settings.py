@@ -91,3 +91,13 @@ AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
 
 # Set settings whose default value is deprecated to a future-proof value
 FEED_EXPORT_ENCODING = "utf-8"
+
+# added for selenium
+from selenium.webdriver.edge.service import Service as EdgeService
+SELENIUM_DRIVER_NAME = 'edge'
+SELENIUM_DRIVER_EXECUTABLE_PATH = r'C:\Drivers\edgedriver\msedgedriver.exe'  # Ensure 'msedgedriver' is in your system PATH
+SELENIUM_DRIVER_ARGUMENTS = ['--headless']  # Add other arguments as needed
+
+DOWNLOADER_MIDDLEWARES = {
+    'sorgle.middlewares.SeleniumMiddleware': 800,
+}

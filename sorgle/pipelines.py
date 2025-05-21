@@ -3,52 +3,57 @@
 from scrapy.exceptions import DropItem
 from itemadapter import ItemAdapter
 from scrapy.exporters import JsonItemExporter, CsvItemExporter
+import os
 
 
 class ProfessorPipeline:
     """
-    A pipeline to validate, clean, normalize, and export professor items.
+    A flexible pipeline to clean, normalize, and export any items.
+    Output filenames are based on the spider name.
     """
 
     def open_spider(self, spider):
-        # Open file handles for JSON and CSV output
-        self.json_file = open('data/professors.json', 'wb')
-        self.csv_file = open('data/professors.csv', 'wb')
+        # Create output directory if it doesn't exist
+        os.makedirs('data', exist_ok=True)
 
-        # Initialize exporters for JSON and CSV
+        # Determine output file paths based on spider name
+        json_path = f"data/{spider.name}.json"
+        csv_path = f"data/{spider.name}.csv"
+
+        # Open file handles for JSON and CSV output
+        self.json_file = open(json_path, 'wb')
+        self.csv_file = open(csv_path, 'wb')
+
+        # Initialize exporters
         self.json_exporter = JsonItemExporter(
             self.json_file, encoding='utf-8', ensure_ascii=False
         )
         self.csv_exporter = CsvItemExporter(self.csv_file)
 
-        # Start exporting: write headers where applicable
+        # Start exporting
         self.json_exporter.start_exporting()
         self.csv_exporter.start_exporting()
 
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
 
-        # 1. Validation: Ensure that 'name' field exists
-        name = adapter.get('name')
-        if not name or not name.strip():
-            raise DropItem(f"Missing or empty 'name' in item: {item}")
+        # 1. Validation: Ensure item is not empty
+        if not adapter or not dict(adapter):
+            raise DropItem(f"Empty item: {item}")
 
         # 2. Cleaning: Strip whitespace from string fields and lists
-        for field in ['name', 'title', 'department', 'email', 'research_interests']:
-            value = adapter.get(field)
+        for field, value in adapter.items():
             if isinstance(value, list):
-                # Strip whitespace for each element in a list
-                cleaned_list = [v.strip() for v in value if isinstance(v, str) and v.strip()]
-                adapter[field] = cleaned_list
+                adapter[field] = [v.strip() for v in value if isinstance(v, str) and v.strip()]
             elif isinstance(value, str):
                 adapter[field] = value.strip()
 
-        # 3. Normalization: Lowercase the email if present
-        email = adapter.get('email')
-        if email:
-            adapter['email'] = email.lower()
+        # 3. Normalization: lowercase emails if field name includes 'email'
+        for field in adapter.field_names():
+            if 'email' in field.lower() and isinstance(adapter.get(field), str):
+                adapter[field] = adapter[field].lower()
 
-        # 4. Export the cleaned item to both JSON and CSV
+        # 4. Export the cleaned item
         self.json_exporter.export_item(dict(adapter))
         self.csv_exporter.export_item(dict(adapter))
 

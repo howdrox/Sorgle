@@ -1,8 +1,3 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 
 class ProfessorItem(scrapy.Item):
@@ -11,5 +6,6 @@ class ProfessorItem(scrapy.Item):
     title = scrapy.Field()
     department = scrapy.Field()
     email = scrapy.Field()
+    phone = scrapy.Field()
     research_interests = scrapy.Field()
     profile_url = scrapy.Field()
