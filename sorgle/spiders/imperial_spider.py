@@ -1,6 +1,6 @@
 import scrapy
 from scrapy_selenium import SeleniumRequest
-from ..items import ProfessorItem
+from ..items import ImperialItem
 
 class ImperialSpider(scrapy.Spider):
     name = "imperial_spider"
@@ -12,7 +12,7 @@ class ImperialSpider(scrapy.Spider):
         )
 
     def parse_profile(self, response):
-        item = ProfessorItem()
+        item = ImperialItem()
         item['university'] = "Imperial College London"
         item['name'] = response.css("h1::text").get(default='').strip()
         item['title'] = response.css("p.title::text").get(default='').strip()

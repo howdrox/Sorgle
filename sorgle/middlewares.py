@@ -97,60 +97,60 @@ class SorgleDownloaderMiddleware:
         spider.logger.info("Spider opened: %s" % spider.name)
 
 
-from scrapy.http import HtmlResponse
-from scrapy import signals
-from selenium import webdriver
-from selenium.webdriver.edge.options import Options as EdgeOptions
-from selenium.webdriver.edge.service import Service as EdgeService
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import time
-import shutil
+# from scrapy.http import HtmlResponse
+# from scrapy import signals
+# from selenium import webdriver
+# from selenium.webdriver.edge.options import Options as EdgeOptions
+# from selenium.webdriver.edge.service import Service as EdgeService
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.common.keys import Keys
+# import time
+# import shutil
 
-class SeleniumMiddleware:
-    def __init__(self, driver_path):
-        self.driver_path = driver_path
+# class SeleniumMiddleware:
+#     def __init__(self, driver_path):
+#         self.driver_path = driver_path
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        path = shutil.which("msedgedriver")  # Or set manually
-        middleware = cls(driver_path=path)
-        crawler.signals.connect(middleware.spider_closed, signal=signals.spider_closed)
-        return middleware
+#     @classmethod
+#     def from_crawler(cls, crawler):
+#         path = shutil.which("msedgedriver")  # Or set manually
+#         middleware = cls(driver_path=path)
+#         crawler.signals.connect(middleware.spider_closed, signal=signals.spider_closed)
+#         return middleware
 
-    def _init_driver(self):
-        options = EdgeOptions()
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--window-size=1920,1080')
-        service = EdgeService(executable_path=self.driver_path)
-        return webdriver.Edge(service=service, options=options)
+#     def _init_driver(self):
+#         options = EdgeOptions()
+#         options.add_argument('--headless')
+#         options.add_argument('--disable-gpu')
+#         options.add_argument('--no-sandbox')
+#         options.add_argument('--window-size=1920,1080')
+#         service = EdgeService(executable_path=self.driver_path)
+#         return webdriver.Edge(service=service, options=options)
 
-    def process_request(self, request, spider):
-        if not request.meta.get('selenium'):
-            return None
+#     def process_request(self, request, spider):
+#         if not request.meta.get('selenium'):
+#             return None
 
-        driver = self._init_driver()
-        driver.get(request.url)
+#         driver = self._init_driver()
+#         driver.get(request.url)
 
-        # Input the search term
-        search_term = request.meta.get('search_term')
-        try:
-            search_box = driver.find_element(By.ID, "edit-lastname")
-            search_box.clear()
-            search_box.send_keys(search_term)
-            search_box.send_keys(Keys.RETURN)
-            time.sleep(2)  # wait for results to load
-        except Exception as e:
-            spider.logger.warning(f"Selenium error for {search_term}: {e}")
+#         # Input the search term
+#         search_term = request.meta.get('search_term')
+#         try:
+#             search_box = driver.find_element(By.ID, "edit-lastname")
+#             search_box.clear()
+#             search_box.send_keys(search_term)
+#             search_box.send_keys(Keys.RETURN)
+#             time.sleep(2)  # wait for results to load
+#         except Exception as e:
+#             spider.logger.warning(f"Selenium error for {search_term}: {e}")
 
-        body = driver.page_source
-        driver.quit()
+#         body = driver.page_source
+#         driver.quit()
 
-        return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
+#         return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
 
-    def spider_closed(self):
-        pass
+#     def spider_closed(self):
+#         pass
 
 

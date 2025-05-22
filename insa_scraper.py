@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 options = EdgeOptions()
 options.add_argument('--headless')  # Run browser in headless mode
-options.add_argument('--ignore-certificate-errors')  # Suppress SSL errors
+# options.add_argument('--ignore-certificate-errors')  # Suppress SSL errors
 # options.add_experimental_option('excludeSwitches', ['enable-logging'])  # Suppress DevTools logs
 
 driver = webdriver.Edge(options=options)
@@ -18,7 +18,7 @@ driver = webdriver.Edge(options=options)
 output_file = 'insa_teachers.csv'
 with open(output_file, mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
-    writer.writerow(['First Name', 'Last Name', 'Phone', 'Department', 'Affiliations'])
+    writer.writerow(['First Name', 'Last Name', 'Phone', 'Department', 'Role'])
 
     try:
         # Generate all two-letter combinations from 'aa' to 'zz'
@@ -62,8 +62,8 @@ with open(output_file, mode='w', newline='', encoding='utf-8') as file:
                     affiliations = [a.get_text(strip=True).lower() for a in cols[4].find_all('a')]
 
                     # Filter for 'teacher' or 'staff' affiliations
-                    if any(role in ['teacher', 'staff'] for role in affiliations):
-                        writer.writerow([first_name, last_name, '; '.join(phone), '; '.join(department), '; '.join(affiliations)])
+                    # if any(role in ['teacher', 'researcher'] for role in affiliations):
+                    writer.writerow([first_name, last_name, ';'.join(phone), ';'.join(department), ';'.join(affiliations)])
 
     finally:
         # Close the WebDriver
