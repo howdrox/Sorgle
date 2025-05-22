@@ -1,7 +1,13 @@
 from flask import Flask, render_template
 import json
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder='templates',
+    # point Flask’s “static” to your data folder:
+    static_folder='../data',
+    static_url_path=''
+)
 
 @app.route('/')
 def home():

@@ -68,19 +68,19 @@ class ProfessorSpider(scrapy.Spider):
     allowed_domains = ["kuleuven.be"]
     def start_requests(self):
         # get the links for “a” once, up front
-        letters = ["a"]  # later: loop a–z, or whatever
+        letters = ["polin"]  # later: loop a–z, or whatever
         for letter in letters:
-            # urls = scrape_lname_links(
-            #     url="https://www.kuleuven.be/wieiswie/en/person/search",
-            #     query="Rijmen",
-            #     search_selector=(By.ID, "personinput"),
-            #     lname_links_selector=(By.CSS_SELECTOR, "a.lname"),
-            #     headless=True
-            # )
-            profile_url = "https://www.kuleuven.be/wieiswie/en/person/00005695"
-            yield scrapy.Request(profile_url, callback=self.parse_profile)
-            # for profile_url in urls:
-            #     yield scrapy.Request(profile_url, callback=self.parse_profile)
+            urls = scrape_lname_links(
+                url="https://www.kuleuven.be/wieiswie/en/person/search",
+                query="polin",
+                search_selector=(By.ID, "personinput"),
+                lname_links_selector=(By.CSS_SELECTOR, "a.lname"),
+                headless=True
+            )
+            # profile_url = "https://www.kuleuven.be/wieiswie/en/person/00005695"  #These are for single url testing
+            # yield scrapy.Request(profile_url, callback=self.parse_profile)       #For single url testing
+            for profile_url in urls:
+                yield scrapy.Request(profile_url, callback=self.parse_profile)
     
     
 

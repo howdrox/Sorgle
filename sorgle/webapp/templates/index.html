@@ -1,18 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Professor Profile</title>
-    <style>
+  <meta charset="UTF-8">
+  <title>Professor Profiles</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      padding: 20px;
+      margin: 0;
+    }
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
     .profile-card {
-      max-width: 300px;
       border: 1px solid #e0e0e0;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       padding: 16px;
       text-align: center;
-      font-family: Arial, sans-serif;
       background-color: #fff;
-      margin: 20px auto;
     }
     .profile-photo {
       width: 100px;
@@ -20,46 +31,103 @@
       border-radius: 50%;
       object-fit: cover;
       margin-bottom: 12px;
+      background: #ddd;
     }
     .profile-name {
-      font-size: 1.5em;
+      font-size: 1.25em;
       margin: 8px 0 4px;
       color: #211f16;
+      white-space: pre-wrap; /* preserve line breaks in names */
     }
     .profile-title {
       font-size: 1em;
-      margin-bottom: 12px;
-      color: #777;
-    }
-    .profile-bio {
-      font-size: 0.95em;
-      line-height: 1.4;
+      margin-bottom: 8px;
       color: #555;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .pagination button {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      margin: 0 4px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: default;
     }
   </style>
 </head>
 <body>
-    <img src= "{{ professor.photo_url }}" alt="Profile Photo" class="profile-photo">
-    <div class="profile-name">{{ professor.name }}</div>
-    <div class="profile-title">{{ professor.title }}</div>
-    <div class="profile-title">{{ professor.curriculum_link }}</div>
-    <div class="profile-title">{{ professor.unit }}</div>
-    <div class="profile-title">{{ professor.functions }}</div>
 
-	
+  <div id="profiles-container" class="profiles-grid"></div>
 
+  <div class="pagination">
+    <button id="prev-btn">« Prev</button>
+    <span id="page-info"></span>
+    <button id="next-btn">Next »</button>
   </div>
-    <!-- <h1>{{ professor.name }}</h1>
-    <h2>{{ professor.title }}</h2> -->
-    
-    <!-- <div class="info">
-        <p>Email: <a href="mailto:{{ professor.email }}">{{ professor.email }}</a></p>
-        <p>Office: {{ professor.office }}</p>
-    </div> -->
-    
-    <!-- <div class="bio">
-        <h3>Bio:</h3>
-        <p>{{ professor.bio }}</p>
-    </div> -->
+
+  <script>
+    const itemsPerPage = 8;
+    let currentPage = 1;
+    let profiles = [];
+
+    const container = document.getElementById('profiles-container');
+    const prevBtn   = document.getElementById('prev-btn');
+    const nextBtn   = document.getElementById('next-btn');
+    const pageInfo  = document.getElementById('page-info');
+
+    // Load JSON data
+    fetch('professor.json')
+      .then(resp => resp.json())
+      .then(data => {
+        profiles = data;
+        renderPage(currentPage);
+      })
+      .catch(err => {
+        console.error('Failed to load professor.json:', err);
+        container.innerHTML = '<p>Unable to load profiles.</p>';
+      });
+
+    function renderPage(page) {
+      const start = (page - 1) * itemsPerPage;
+      const pageItems = profiles.slice(start, start + itemsPerPage);
+
+      container.innerHTML = '';
+      pageItems.forEach(p => {
+        const photoUrl = p.photo_url && p.photo_url !== 'None'
+          ? p.photo_url
+          : 'https://via.placeholder.com/100?text=No+Photo';
+
+        const card = document.createElement('div');
+        card.className = 'profile-card';
+        card.innerHTML = `
+          <img src="${photoUrl}" alt="${p.name.trim()}" class="profile-photo">
+          <div class="profile-name">${p.name.trim()}</div>
+          <div class="profile-title">${p.title || '—'}</div>
+          <div><a href="${p.url}" target="_blank">Profile Link</a></div>
+        `;
+        container.appendChild(card);
+      });
+
+      const totalPages = Math.ceil(profiles.length / itemsPerPage);
+      pageInfo.textContent = `Page ${page} of ${totalPages}`;
+      prevBtn.disabled = page <= 1;
+      nextBtn.disabled = page >= totalPages;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) renderPage(--currentPage);
+    });
+    nextBtn.addEventListener('click', () => {
+      const totalPages = Math.ceil(profiles.length / itemsPerPage);
+      if (currentPage < totalPages) renderPage(++currentPage);
+    });
+  </script>
 </body>
 </html>
