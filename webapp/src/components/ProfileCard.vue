@@ -4,9 +4,9 @@
     <!-- avatar -->
     <q-item-section avatar>
       <q-avatar size="56px">
-        <template v-if="props.photo">
+        <template v-if="props.photo_url">
           <img
-            :src="props.photo"
+            :src="props.photo_url"
             alt="profile photo"
             style="object-fit: cover; object-position: center; width: 100%; height: 100%"
           />
@@ -25,7 +25,7 @@
       </div>
 
       <!-- university • department -->
-      <div class="text-caption text-grey-6">{{ props.university }} • {{ props.department }}</div>
+      <div class="text-caption text-grey-6">{{ props.university }} • {{ props.unit }}</div>
     </q-item-section>
   </q-item>
 </template>
@@ -35,8 +35,8 @@ import { defineProps } from 'vue';
 
 const props = defineProps<{
   name: string
-  photo: string
+  photo_url: string | null
   university: string
-  department: string
+  unit: string[]
 }>()
 </script>

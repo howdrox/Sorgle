@@ -11,9 +11,9 @@
 
             <!-- Avatar (overlapping banner and card) -->
             <q-avatar class="profile-avatar shadow-2">
-              <template v-if="mainProfile.photo">
+              <template v-if="mainProfile.photo_url">
                 <img
-                  :src="mainProfile.photo"
+                  :src="mainProfile.photo_url"
                   alt="Profile Photo"
                   style="object-fit: cover; object-position: center"
                 />
@@ -28,7 +28,32 @@
               <q-card-section>
                 <div class="text-h6">{{ mainProfile.name }}</div>
                 <div class="text-subtitle2 text-grey-7">{{ mainProfile.university }}</div>
-                <div class="text-subtitle2 text-grey-7">{{ mainProfile.department }}</div>
+                <div class="text-subtitle2 text-grey-7">{{ mainProfile.unit.join(', ') }}</div>
+
+                <div v-if="mainProfile.title" class="q-mt-sm">
+                  <q-icon name="badge" size="xs" class="q-mr-xs" />
+                  {{ mainProfile.title }}
+                </div>
+
+                <div v-if="mainProfile.phone?.length" class="q-mt-sm">
+                  <q-icon name="phone" size="xs" class="q-mr-xs" />
+                  {{ mainProfile.phone.join(', ') }}
+                </div>
+
+                <div v-if="mainProfile.functions?.length" class="q-mt-sm">
+                  <q-icon name="work" size="xs" class="q-mr-xs" />
+                  {{ mainProfile.functions.join(', ') }}
+                </div>
+
+                <div v-if="mainProfile.url" class="q-mt-sm">
+                  <q-icon name="link" size="xs" class="q-mr-xs" />
+                  <a :href="mainProfile.url" target="_blank">{{ mainProfile.url }}</a>
+                </div>
+
+                <div v-if="mainProfile.orcid_link" class="q-mt-sm">
+                  <q-icon name="account_circle" size="xs" class="q-mr-xs" />
+                  <a :href="mainProfile.orcid_link" target="_blank">{{ mainProfile.orcid_link }}</a>
+                </div>
               </q-card-section>
             </q-card>
           </div>
@@ -47,13 +72,19 @@
               style="text-decoration: none"
             >
               <ProfileCard
+                :id="profile.id"
                 :name="profile.name"
-                :photo="profile.photo"
+                :photo_url="profile.photo_url"
                 :university="profile.university"
-                :department="profile.department"
+                :unit="profile.unit"
                 class="q-my-sm br-16"
-            /></router-link>
+              />
+            </router-link>
             <q-separator v-if="i < similarProfiles.length - 1" />
+          </div>
+
+          <div v-if="similarProfiles.length === 0" class="text-center text-grey-6 q-pa-md">
+            No similar profiles found.
           </div>
         </q-card>
       </div>
@@ -74,100 +105,116 @@
 </style>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import ProfileCard from 'components/ProfileCard.vue';
 
-const mainProfile = ref({
-  name: 'Lauriane Bret',
-  photo: 'https://www.kuleuven.be/wieiswie/en/person/00147234/photo',
-  university: 'University of Lyon',
-  department: 'Graphic Design',
+interface Profile {
+  id: number;
+  name: string;
+  university: string;
+  photo_url: string | null;
+  orcid_link: string | null;
+  phone?: string[];
+  unit: string[];
+  functions?: string[];
+  title?: string;
+  url?: string;
+}
+
+const route = useRoute();
+
+const mainProfile = ref<Profile>({
+  id: 0,
+  name: '',
+  university: '',
+  photo_url: null,
+  orcid_link: null,
+  unit: [],
 });
 
-const similarProfiles = ref([
-  {
-    id: 1,
-    name: 'Marie-Rose Perret',
-    photo: '',
-    university: 'Design Institute Paris',
-    department: 'Visual Communication',
+const similarProfiles = ref<Profile[]>([]);
+
+async function loadProfile() {
+  // 1) Read the numeric id from the URL. If it's not a number, bail out.
+  const id = Number(route.params.id);
+  if (isNaN(id)) {
+    mainProfile.value = {
+      id: 0,
+      name: '',
+      university: '',
+      photo_url: null,
+      orcid_link: null,
+      unit: [],
+    };
+    similarProfiles.value = [];
+    return;
+  }
+
+  // 2) Fetch the full list of professors (you could optimize to fetch a single record if you have an API)
+  const response = await fetch('/professors.json');
+  const data: Profile[] = await response.json();
+
+  // 3) Find and set the main profile
+  const profile = data.find((p) => p.id === id);
+  if (profile) {
+    mainProfile.value = {
+      ...profile,
+      // Optional: convert "None" → null if needed
+      photo_url: profile.photo_url === 'None' ? null : profile.photo_url,
+      orcid_link: profile.orcid_link === 'None' ? null : profile.orcid_link,
+    };
+  } else {
+    // If not found, clear out
+    mainProfile.value = {
+      id: 0,
+      name: '',
+      university: '',
+      photo_url: null,
+      orcid_link: null,
+      unit: [],
+    };
+  }
+
+  // Compute “similar” profiles by:
+  //    • same university
+  //    • OR at least one shared unit
+  //    • OR name similarity (either name contains the other, case-insensitive)
+  if (profile) {
+    const baseName = profile.name.toLowerCase();
+    const baseUnits = profile.unit;
+
+    similarProfiles.value = data
+      .filter((p) => {
+        if (p.id === profile.id) {
+          return false;
+        }
+
+        // a) Same university?
+        const sameUniv = p.university === profile.university;
+
+        // b) Shared unit?
+        const sharedUnit = p.unit.some((u) => baseUnits.includes(u));
+
+        // c) Name similarity?
+        const otherName = p.name.toLowerCase();
+        const nameSim = otherName.includes(baseName) || baseName.includes(otherName);
+
+        return sameUniv || sharedUnit || nameSim;
+      })
+      .slice(0, 5);
+  } else {
+    similarProfiles.value = [];
+  }
+}
+
+onMounted(loadProfile);
+
+// 5) Whenever the route’s `id` param changes, reload:
+watch(
+  () => route.params.id,
+  () => {
+    void loadProfile();
   },
-  {
-    id: 2,
-    name: 'Coline Wiedmann',
-    photo: '',
-    university: 'Marseille Art School',
-    department: 'Brand Design',
-  },
-  {
-    id: 3,
-    name: 'Sophia Estevao',
-    photo: '',
-    university: 'Université de Nice',
-    department: 'UX Research',
-  },
-  {
-    id: 4,
-    name: 'Marie-Rose Perret',
-    photo: '',
-    university: 'Design Institute Paris',
-    department: 'Visual Communication',
-  },
-  {
-    id: 5,
-    name: 'Coline Wiedmann',
-    photo: '',
-    university: 'Marseille Art School',
-    department: 'Brand Design',
-  },
-  {
-    id: 6,
-    name: 'Sophia Estevao',
-    photo: '',
-    university: 'Université de Nice',
-    department: 'UX Research',
-  },
-  {
-    id: 7,
-    name: 'Marie-Rose Perret',
-    photo: '',
-    university: 'Design Institute Paris',
-    department: 'Visual Communication',
-  },
-  {
-    id: 8,
-    name: 'Coline Wiedmann',
-    photo: '',
-    university: 'Marseille Art School',
-    department: 'Brand Design',
-  },
-  {
-    id: 9,
-    name: 'Sophia Estevao',
-    photo: '',
-    university: 'Université de Nice',
-    department: 'UX Research',
-  },
-  {
-    id: 10,
-    name: 'Marie-Rose Perret',
-    photo: '',
-    university: 'Design Institute Paris',
-    department: 'Visual Communication',
-  },
-  {
-    id: 11,
-    name: 'Coline Wiedmann',
-    photo: '',
-    university: 'Marseille Art School',
-    department: 'Brand Design',
-  },
-  {
-    id: 12,
-    name: 'Sophia Estevao',
-    photo: '',
-    university: 'Université de Nice',
-    department: 'UX Research',
-  },
-]);
+);
 </script>
