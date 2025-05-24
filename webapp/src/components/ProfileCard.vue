@@ -24,8 +24,14 @@
         {{ props.name }}
       </div>
 
-      <!-- university • department -->
-      <div class="text-caption text-grey-6">{{ props.university }} • {{ props.unit }}</div>
+      <!-- university -->
+      <div class="text-caption text-grey-6">{{ props.university }}</div>
+      <!-- department list -->
+      <ul class="q-mt-xs q-mb-none" style="padding-left: 1em;">
+        <li v-for="(dept, idx) in props.unit" :key="idx" class="text-caption text-grey-7">
+          {{ dept }}
+        </li>
+      </ul>
     </q-item-section>
   </q-item>
 </template>
