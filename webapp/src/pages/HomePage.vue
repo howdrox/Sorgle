@@ -1,6 +1,11 @@
 <template>
   <div class="q-pa-md flex flex-center column" style="min-height: 70vh">
-    <img src="/sorgle_full.png" alt="Sorgle Logo" style="width: 600px;" />
+    <img
+      src="/sorgle_full.png"
+      alt="Sorgle Logo"
+      style="width: 600px; cursor: pointer;"
+      @click="router.push('/easteregg')"
+    />
 
     <q-input
       v-model="query"
