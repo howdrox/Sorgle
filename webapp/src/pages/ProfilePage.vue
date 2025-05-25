@@ -13,7 +13,13 @@
               <img
                 :src="mainProfile.photo_url"
                 alt="Profile Photo"
-                style="object-fit: cover; object-position: center; width: 100%; height: 100%"
+                style="
+                  object-fit: cover;
+                  object-position: center;
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 50%;
+                "
               />
             </template>
             <template v-else>
@@ -26,7 +32,7 @@
             class="q-px-lg q-py-md relative-position"
             style="padding-top: 60px; border-radius: 0 0 16px 16px; overflow: visible"
           >
-            <!-- Absolute‐positioned logo in top right -->
+            <!-- University logo (top-right) -->
             <div
               v-if="mainProfile.university"
               style="
@@ -39,49 +45,71 @@
               "
             >
               <img
-                :src="`/university-logos/${mainProfile.university.replace(/\s+/g, '-').toLowerCase()}.png`"
+                :src="`/university-logos/${slugify(mainProfile.university)}.png`"
                 alt="University Logo"
                 style="height: 100%; width: auto; object-fit: contain; display: block"
               />
             </div>
 
             <q-card-section>
-              <div class="row items-start">
-                <!-- Name and university text only; logo is absolute -->
-                <div>
-                  <div class="text-h6">{{ mainProfile.name }}</div>
-                  <div v-if="mainProfile.university" class="text-subtitle2 text-grey-7">
-                    {{ mainProfile.university }}
-                  </div>
-                </div>
+              <!-- Name -->
+              <div class="text-h6">{{ mainProfile.name }}</div>
+
+              <!-- University text (logo separate) -->
+              <div v-if="mainProfile.university" class="text-subtitle2 text-grey-7">
+                {{ mainProfile.university }}
               </div>
 
-              <ul class="q-ma-none q-mt-md" style="padding-left: 1em">
+              <!-- Unit (departments) as bullet list -->
+              <ul v-if="mainProfile.unit?.length" class="q-ma-none q-mt-md" style="padding-left: 0">
                 <li
                   v-for="(dept, idx) in mainProfile.unit"
                   :key="idx"
                   class="text-subtitle2 text-grey-7"
+                  style="display: flex; align-items: center"
                 >
+                  <q-icon name="badge" size="xs" class="q-mr-xs" />
                   {{ dept }}
                 </li>
               </ul>
 
-              <div v-if="mainProfile.phone?.length" class="q-mt-sm">
-                <q-icon name="phone" size="xs" class="q-mr-xs" />
-                {{ mainProfile.phone.join(', ') }}
+              <!-- Title / Department -->
+              <div v-if="mainProfile.title" class="text-subtitle2 text-grey-7 q-mt-sm">
+                <q-icon name="badge" size="xs" class="q-mr-xs" />
+                {{ mainProfile.title }}
               </div>
 
-              <div v-if="mainProfile.functions?.length" class="q-mt-sm">
+              <!-- Email -->
+              <div v-if="mainProfile.email" class="text-subtitle2 text-grey-7 q-mt-sm">
+                <q-icon name="email" size="xs" class="q-mr-xs" />
+                <a :href="`mailto:${mainProfile.email}`">{{ mainProfile.email }}</a>
+              </div>
+
+              <!-- Phone (string or array) -->
+              <div v-if="mainProfile.phone?.length" class="text-subtitle2 text-grey-7 q-mt-sm">
+                <q-icon name="phone" size="xs" class="q-mr-xs" />
+                <span v-if="typeof mainProfile.phone === 'string'">
+                  {{ mainProfile.phone }}
+                </span>
+                <span v-else>
+                  {{ (mainProfile.phone as string[]).join(', ') }}
+                </span>
+              </div>
+
+              <!-- Functions / roles -->
+              <div v-if="mainProfile.functions?.length" class="text-subtitle2 text-grey-7 q-mt-sm">
                 <q-icon name="work" size="xs" class="q-mr-xs" />
                 {{ mainProfile.functions.join(', ') }}
               </div>
 
-              <div v-if="mainProfile.profile_url" class="q-mt-sm">
+              <!-- Profile URL (personal page) -->
+              <div v-if="mainProfile.profile_url" class="text-subtitle2 text-grey-7 q-mt-sm">
                 <q-icon name="account_circle" size="xs" class="q-mr-xs" />
                 <a :href="mainProfile.profile_url" target="_blank">{{ mainProfile.profile_url }}</a>
               </div>
 
-              <div v-if="mainProfile.orcid_link" class="q-mt-sm">
+              <!-- ORCID link -->
+              <div v-if="mainProfile.orcid_link" class="text-subtitle2 text-grey-7 q-mt-sm">
                 <q-icon name="account_circle" size="xs" class="q-mr-xs" />
                 <a :href="mainProfile.orcid_link" target="_blank">{{ mainProfile.orcid_link }}</a>
               </div>
@@ -89,7 +117,7 @@
               <!-- Separator before Bio -->
               <q-separator v-if="mainProfile.bio?.length" class="q-my-md" />
 
-              <!-- Bio Section: now an array of paragraphs -->
+              <!-- Bio Section: render each paragraph -->
               <div v-if="mainProfile.bio?.length">
                 <div class="text-subtitle2 text-grey-7 q-mb-xs">Bio</div>
                 <div
@@ -140,8 +168,8 @@
 <style scoped>
 .profile-avatar {
   position: absolute;
-  top: 140px;
   left: 32px;
+  top: 140px; /* 200px banner – (120px avatar ÷ 2) = 140px */
   width: 120px;
   height: 120px;
   background-color: white;
@@ -154,17 +182,33 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import ProfileCard from 'components/ProfileCard.vue';
 
+/**
+ * Slugify function for university → logo filename.
+ * E.g. "Tsinghua University" → "tsinghua-university"
+ */
+function slugify(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .toLowerCase();
+}
+
 interface Profile {
   id: number;
   name: string;
   university: string;
   photo_url: string | null;
-  orcid_link?: string | null;
-  phone?: string[];
+  orcid_link?: string | null | undefined;
+  email?: string | undefined;
+  phone?: string | string[] | undefined;
   unit: string[];
-  functions?: string[];
-  profile_url?: string;
-  bio?: string[]; // ← now an array of paragraphs
+  functions?: string[] | undefined;
+  profile_url?: string | undefined;
+  bio?: string[] | undefined;
+  title?: string | undefined;
 }
 
 const route = useRoute();
@@ -174,14 +218,19 @@ const mainProfile = ref<Profile>({
   name: '',
   university: '',
   photo_url: null,
+  orcid_link: null,
   unit: [],
-  bio: [], // default empty array
+  bio: [],
+  phone: undefined,
+  functions: [],
+  profile_url: undefined,
+  email: undefined,
+  title: undefined,
 });
 
 const similarProfiles = ref<Profile[]>([]);
 
 async function loadProfile() {
-  // 1) Read numeric ID from URL
   const id = Number(route.params.id);
   if (isNaN(id)) {
     mainProfile.value = {
@@ -192,23 +241,33 @@ async function loadProfile() {
       orcid_link: null,
       unit: [],
       bio: [],
+      phone: undefined,
+      functions: [],
+      profile_url: undefined,
+      email: undefined,
+      title: undefined,
     };
     similarProfiles.value = [];
     return;
   }
 
-  // 2) Fetch full list of professors
   const response = await fetch('/professors.json');
   const data: Profile[] = await response.json();
 
-  // 3) Find and set mainProfile
+  // Find the main profile by ID
   const profile = data.find((p) => p.id === id);
   if (profile) {
     mainProfile.value = {
       ...profile,
+      // Convert literal "None" or missing fields to null/undefined
       photo_url: profile.photo_url ?? null,
-      orcid_link: profile.orcid_link ?? null,
+      orcid_link: profile.orcid_link === 'None' ? null : (profile.orcid_link ?? null),
       bio: profile.bio ?? [],
+      phone: profile.phone ?? undefined,
+      functions: profile.functions ?? [],
+      profile_url: profile.profile_url ?? undefined,
+      email: profile.email ?? undefined,
+      title: profile.title ?? undefined,
     };
   } else {
     mainProfile.value = {
@@ -219,29 +278,35 @@ async function loadProfile() {
       orcid_link: null,
       unit: [],
       bio: [],
+      phone: undefined,
+      functions: [],
+      profile_url: undefined,
+      email: undefined,
+      title: undefined,
     };
   }
 
-  // 4) Compute similarProfiles (unchanged)
+  // Compute similar profiles (shared units & name)
   if (profile) {
     const baseName = profile.name.toLowerCase().trim();
     const baseUnits = profile.unit.map((u) => u.toLowerCase());
 
-    const scoredProfiles = data
+    const scoredArray = data
       .filter((p) => p.id !== profile.id)
       .map((p) => {
+        // Shared units
         const otherUnits = p.unit.map((u) => u.toLowerCase());
-        const sharedUnits = otherUnits.filter((u) => baseUnits.includes(u));
-        const sharedUnitCount = sharedUnits.length;
+        const sharedUnitCount = otherUnits.filter((u) => baseUnits.includes(u)).length;
 
-        const baseNameWords = baseName.split(/\s+/);
+        // Name similarity (count of shared words)
+        const baseWords = baseName.split(/\s+/);
         const otherName = p.name.toLowerCase().trim();
-        const otherNameWords = otherName.split(/\s+/);
-        const sharedNameWords = baseNameWords.filter((w) => otherNameWords.includes(w));
-        const nameScore = sharedNameWords.length > 0 ? sharedNameWords.length : 0;
+        const otherWords = otherName.split(/\s+/);
+        const sharedWordsCount = baseWords.filter((w) => otherWords.includes(w)).length;
 
-        // Adjust weights as desired:
-        const score = sharedUnitCount * 2 + nameScore * 1;
+        // Scoring: shared unit = 2 pts each, shared word = 1 pt each
+        const score = sharedUnitCount * 2 + sharedWordsCount;
+
         return { profile: p, score };
       })
       .filter((item) => item.score > 0)
@@ -249,7 +314,7 @@ async function loadProfile() {
       .slice(0, 5)
       .map((item) => item.profile);
 
-    similarProfiles.value = scoredProfiles;
+    similarProfiles.value = scoredArray;
   } else {
     similarProfiles.value = [];
   }
@@ -261,6 +326,6 @@ watch(
   () => route.params.id,
   () => {
     void loadProfile();
-  }
+  },
 );
 </script>
