@@ -3,7 +3,6 @@
     <div class="row q-col-gutter-lg">
       <!-- Left Column: Profile Info and Banner -->
       <div class="col-12 col-md-7">
-        <!-- Top section with banner and overlapping avatar -->
         <div class="relative-position">
           <!-- Banner -->
           <div class="bg-primary" style="height: 200px; border-radius: 16px 16px 0 0"></div>
@@ -24,21 +23,40 @@
 
           <!-- Card with Profile Info -->
           <q-card
-            class="q-px-lg q-py-md"
+            class="q-px-lg q-py-md relative-position"
             style="padding-top: 60px; border-radius: 0 0 16px 16px; overflow: visible"
           >
+            <!-- Absolute‐positioned logo in top right -->
+            <div
+              v-if="mainProfile.university"
+              style="
+                position: absolute;
+                top: 32px;
+                right: 32px;
+                height: 50px;
+                width: auto;
+                z-index: 1;
+              "
+            >
+              <img
+                :src="`/university-logos/${mainProfile.university.replace(/\s+/g, '-').toLowerCase()}.png`"
+                alt="University Logo"
+                style="height: 100%; width: auto; object-fit: contain; display: block"
+              />
+            </div>
+
             <q-card-section>
-              <div class="text-h6">{{ mainProfile.name }}</div>
-                <div class="text-subtitle2 text-grey-7 flex items-center">
-                <img
-                  v-if="mainProfile.university"
-                  :src="`/university-logos/${mainProfile.university.replace(/\s+/g, '-').toLowerCase()}.png`"
-                  alt="University Logo"
-                  style="height: 24px; width: 24px; object-fit: contain; margin-right: 8px"
-                />
-                {{ mainProfile.university }}
+              <div class="row items-start">
+                <!-- Name and university text only; logo is absolute -->
+                <div>
+                  <div class="text-h6">{{ mainProfile.name }}</div>
+                  <div v-if="mainProfile.university" class="text-subtitle2 text-grey-7">
+                    {{ mainProfile.university }}
+                  </div>
                 </div>
-              <ul class="q-ma-none" style="padding-left: 1em">
+              </div>
+
+              <ul class="q-ma-none q-mt-md" style="padding-left: 1em">
                 <li
                   v-for="(dept, idx) in mainProfile.unit"
                   :key="idx"
@@ -58,14 +76,29 @@
                 {{ mainProfile.functions.join(', ') }}
               </div>
 
-              <div v-if="mainProfile.url" class="q-mt-sm">
-                <q-icon name="link" size="xs" class="q-mr-xs" />
-                <a :href="mainProfile.url" target="_blank">{{ mainProfile.url }}</a>
+              <div v-if="mainProfile.profile_url" class="q-mt-sm">
+                <q-icon name="account_circle" size="xs" class="q-mr-xs" />
+                <a :href="mainProfile.profile_url" target="_blank">{{ mainProfile.profile_url }}</a>
               </div>
 
               <div v-if="mainProfile.orcid_link" class="q-mt-sm">
                 <q-icon name="account_circle" size="xs" class="q-mr-xs" />
                 <a :href="mainProfile.orcid_link" target="_blank">{{ mainProfile.orcid_link }}</a>
+              </div>
+
+              <!-- Separator before Bio -->
+              <q-separator v-if="mainProfile.bio?.length" class="q-my-md" />
+
+              <!-- Bio Section: now an array of paragraphs -->
+              <div v-if="mainProfile.bio?.length">
+                <div class="text-subtitle2 text-grey-7 q-mb-xs">Bio</div>
+                <div
+                  v-for="(paragraph, idx) in mainProfile.bio"
+                  :key="idx"
+                  class="text-body2 q-mb-sm"
+                >
+                  {{ paragraph }}
+                </div>
               </div>
             </q-card-section>
           </q-card>
@@ -130,7 +163,8 @@ interface Profile {
   phone?: string[];
   unit: string[];
   functions?: string[];
-  url?: string;
+  profile_url?: string;
+  bio?: string[]; // ← now an array of paragraphs
 }
 
 const route = useRoute();
@@ -141,12 +175,13 @@ const mainProfile = ref<Profile>({
   university: '',
   photo_url: null,
   unit: [],
+  bio: [], // default empty array
 });
 
 const similarProfiles = ref<Profile[]>([]);
 
 async function loadProfile() {
-  // 1) Read the numeric id from the URL. If it's not a number, bail out.
+  // 1) Read numeric ID from URL
   const id = Number(route.params.id);
   if (isNaN(id)) {
     mainProfile.value = {
@@ -156,22 +191,24 @@ async function loadProfile() {
       photo_url: null,
       orcid_link: null,
       unit: [],
+      bio: [],
     };
     similarProfiles.value = [];
     return;
   }
 
-  // 2) Fetch the full list of professors
+  // 2) Fetch full list of professors
   const response = await fetch('/professors.json');
   const data: Profile[] = await response.json();
 
-  // 3) Find and set the main profile
+  // 3) Find and set mainProfile
   const profile = data.find((p) => p.id === id);
   if (profile) {
     mainProfile.value = {
       ...profile,
       photo_url: profile.photo_url ?? null,
       orcid_link: profile.orcid_link ?? null,
+      bio: profile.bio ?? [],
     };
   } else {
     mainProfile.value = {
@@ -181,13 +218,11 @@ async function loadProfile() {
       photo_url: null,
       orcid_link: null,
       unit: [],
+      bio: [],
     };
   }
 
-  // 4) Compute “similar” profiles by:
-  //    • Shared units (case‐insensitive) → higher weight
-  //    • Name similarity (substring match, case‐insensitive) → lower weight
-  //    • Combine into one score and pick top 5
+  // 4) Compute similarProfiles (unchanged)
   if (profile) {
     const baseName = profile.name.toLowerCase().trim();
     const baseUnits = profile.unit.map((u) => u.toLowerCase());
@@ -195,32 +230,22 @@ async function loadProfile() {
     const scoredProfiles = data
       .filter((p) => p.id !== profile.id)
       .map((p) => {
-        // Shared units (case‐insensitive)
         const otherUnits = p.unit.map((u) => u.toLowerCase());
         const sharedUnits = otherUnits.filter((u) => baseUnits.includes(u));
         const sharedUnitCount = sharedUnits.length;
 
-        // Name similarity: simple substring match
-        // Split names into words for better similarity matching
         const baseNameWords = baseName.split(/\s+/);
         const otherName = p.name.toLowerCase().trim();
         const otherNameWords = otherName.split(/\s+/);
-
-        // Name similarity: count overlapping words (case-insensitive)
-        const sharedNameWords = baseNameWords.filter(word => otherNameWords.includes(word));
+        const sharedNameWords = baseNameWords.filter((w) => otherNameWords.includes(w));
         const nameScore = sharedNameWords.length > 0 ? sharedNameWords.length : 0;
 
-        // Final scoring: units carry a higher weight (e.g. weight = 5 each),
-        // name similarity carries a lower weight (weight = 1).
+        // Adjust weights as desired:
         const score = sharedUnitCount * 2 + nameScore * 1;
-
         return { profile: p, score };
       })
-      // Exclude anyone with zero total score (no shared unit AND no name match)
       .filter((item) => item.score > 0)
-      // Sort descending by score
       .sort((a, b) => b.score - a.score)
-      // Take top 5
       .slice(0, 5)
       .map((item) => item.profile);
 

@@ -2,6 +2,7 @@ import json
 import sys
 from pathlib import Path
 
+
 def load_json_file(path: Path) -> list[dict]:
     """
     Loads a JSON file from disk, expecting a top-level array of objects.
@@ -12,6 +13,7 @@ def load_json_file(path: Path) -> list[dict]:
     if not isinstance(data, list):
         raise ValueError(f"{path} does not contain a top-level JSON array.")
     return data
+
 
 def merge_json_lists(file_paths: list[Path], output_path: Path) -> None:
     """
@@ -56,6 +58,17 @@ def merge_json_lists(file_paths: list[Path], output_path: Path) -> None:
                     new_rec[key] = None
         merged_records.append(new_rec)
 
+        # 4.5) Re-assign numeric IDs to any record where id is None
+    existing_ids = [
+        rec["id"] for rec in merged_records if isinstance(rec.get("id"), int)
+    ]
+    max_id = max(existing_ids, default=0)
+
+    for rec in merged_records:
+        if rec.get("id") is None:
+            max_id += 1
+            rec["id"] = max_id
+
     # 5) Write merged_records back out as a JSON array
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(merged_records, f, ensure_ascii=False, indent=2)
@@ -74,17 +87,18 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="Merge multiple JSON files (arrays of objects) into one, "
-                    "filling missing fields with [] or null."
+        "filling missing fields with [] or null."
     )
     parser.add_argument(
         "inputs",
         nargs="+",
-        help="Paths to input JSON files (each must contain a top-level array of objects)."
+        help="Paths to input JSON files (each must contain a top-level array of objects).",
     )
     parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         default="merged.json",
-        help="Path for the merged JSON output (default: merged.json)."
+        help="Path for the merged JSON output (default: merged.json).",
     )
 
     args = parser.parse_args()
