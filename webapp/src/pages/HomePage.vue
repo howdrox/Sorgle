@@ -24,6 +24,16 @@
         />
       </template>
     </q-input>
+
+    <q-btn
+      icon="info"
+      round
+      color="primary"
+      class="info-btn"
+      @click="router.push('/info')"
+      style="position: fixed; bottom: 24px; right: 24px; z-index: 1000;"
+      aria-label="Info"
+    />
   </div>
 </template>
 
