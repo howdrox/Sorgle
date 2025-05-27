@@ -86,7 +86,7 @@
               </div>
 
               <!-- Phone (string or array) -->
-              <div v-if="mainProfile.phone !== undefined" class="text-subtitle2 text-grey-7 q-mt-sm">
+              <div v-if="mainProfile.phone?.length" class="text-subtitle2 text-grey-7 q-mt-sm">
                 <q-icon name="phone" size="xs" class="q-mr-xs" />
                 <span v-if="typeof mainProfile.phone === 'string'">
                   {{ mainProfile.phone }}
@@ -205,7 +205,7 @@ interface Profile {
   photo_url: string | null;
   orcid_link: string | null;
   email: string | undefined;
-  phone: string | string[] | undefined;
+  phone: string[] | undefined;
   unit: string[];
   functions: string[] | undefined;
   profile_url: string | undefined;
@@ -247,7 +247,7 @@ async function loadAllProfiles() {
     name: p.name,
     university: p.university,
     photo_url: p.photo_url ?? null,
-    orcid_link: p.orcid_link === 'None' ? null : p.orcid_link ?? null,
+    orcid_link: p.orcid_link === 'None' ? null : (p.orcid_link ?? null),
     email: p.email ?? undefined,
     phone: p.phone ?? undefined,
     unit: p.unit ?? [],
@@ -346,6 +346,6 @@ watch(
   () => route.params.id,
   () => {
     void loadProfile();
-  }
+  },
 );
 </script>
