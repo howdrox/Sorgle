@@ -61,7 +61,7 @@
               </div>
 
               <!-- Unit (departments) as bullet list -->
-              <ul v-if="mainProfile.unit?.length" class="q-ma-none q-mt-md" style="padding-left: 0">
+              <ul v-if="mainProfile.unit.length" class="q-ma-none q-mt-md" style="padding-left: 0">
                 <li
                   v-for="(dept, idx) in mainProfile.unit"
                   :key="idx"
@@ -86,7 +86,7 @@
               </div>
 
               <!-- Phone (string or array) -->
-              <div v-if="mainProfile.phone?.length" class="text-subtitle2 text-grey-7 q-mt-sm">
+              <div v-if="mainProfile.phone !== undefined" class="text-subtitle2 text-grey-7 q-mt-sm">
                 <q-icon name="phone" size="xs" class="q-mr-xs" />
                 <span v-if="typeof mainProfile.phone === 'string'">
                   {{ mainProfile.phone }}
@@ -180,6 +180,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import Fuse from 'fuse.js';
 import ProfileCard from 'components/ProfileCard.vue';
 
 /**
@@ -196,136 +197,155 @@ function slugify(str: string): string {
     .toLowerCase();
 }
 
+// --- 1) Update Profile interface so optional fields explicitly include `undefined` ---
 interface Profile {
   id: number;
   name: string;
   university: string;
   photo_url: string | null;
-  orcid_link?: string | null | undefined;
-  email?: string | undefined;
-  phone?: string | string[] | undefined;
+  orcid_link: string | null;
+  email: string | undefined;
+  phone: string | string[] | undefined;
   unit: string[];
-  functions?: string[] | undefined;
-  profile_url?: string | undefined;
-  bio?: string[] | undefined;
-  title?: string | undefined;
+  functions: string[] | undefined;
+  profile_url: string | undefined;
+  bio: string[] | undefined;
+  title: string | undefined;
 }
 
 const route = useRoute();
 
+// --- 2) Initialize `mainProfile` with every field explicitly present (no omitted keys) ---
 const mainProfile = ref<Profile>({
   id: 0,
   name: '',
   university: '',
   photo_url: null,
   orcid_link: null,
-  unit: [],
-  bio: [],
-  phone: undefined,
-  functions: [],
-  profile_url: undefined,
   email: undefined,
+  phone: undefined,
+  unit: [],
+  functions: undefined,
+  profile_url: undefined,
+  bio: undefined,
   title: undefined,
 });
 
 const similarProfiles = ref<Profile[]>([]);
 
+// We will keep the full list of all profiles here, and a single Fuse index
+let allProfiles: Profile[] = [];
+let fuse: Fuse<Profile> | null = null;
+
+async function loadAllProfiles() {
+  const response = await fetch('/professors.json');
+  const data: Profile[] = await response.json();
+
+  // Normalize any missing fields so they match our interface exactly
+  allProfiles = data.map((p) => ({
+    id: p.id,
+    name: p.name,
+    university: p.university,
+    photo_url: p.photo_url ?? null,
+    orcid_link: p.orcid_link === 'None' ? null : p.orcid_link ?? null,
+    email: p.email ?? undefined,
+    phone: p.phone ?? undefined,
+    unit: p.unit ?? [],
+    functions: p.functions ?? undefined,
+    profile_url: p.profile_url ?? undefined,
+    bio: p.bio ?? undefined,
+    title: p.title ?? undefined,
+  }));
+
+  // Build Fuse over name, university, and unit fields
+  fuse = new Fuse(allProfiles, {
+    keys: [
+      { name: 'name', weight: 0.8 },
+      { name: 'university', weight: 0.19 },
+      { name: 'unit', weight: 0.01 },
+    ],
+    threshold: 0.4,
+    distance: 100,
+    ignoreLocation: true,
+  });
+}
+
 async function loadProfile() {
   const id = Number(route.params.id);
   if (isNaN(id)) {
+    // Invalid ID: reset mainProfile and clear similarProfiles
     mainProfile.value = {
       id: 0,
       name: '',
       university: '',
       photo_url: null,
       orcid_link: null,
-      unit: [],
-      bio: [],
-      phone: undefined,
-      functions: [],
-      profile_url: undefined,
       email: undefined,
+      phone: undefined,
+      unit: [],
+      functions: undefined,
+      profile_url: undefined,
+      bio: undefined,
       title: undefined,
     };
     similarProfiles.value = [];
     return;
   }
 
-  const response = await fetch('/professors.json');
-  const data: Profile[] = await response.json();
+  // 1) Ensure we have allProfiles + fuse built
+  if (!allProfiles.length || !fuse) {
+    await loadAllProfiles();
+  }
 
-  // Find the main profile by ID
-  const profile = data.find((p) => p.id === id);
-  if (profile) {
-    mainProfile.value = {
-      ...profile,
-      // Convert literal "None" or missing fields to null/undefined
-      photo_url: profile.photo_url ?? null,
-      orcid_link: profile.orcid_link === 'None' ? null : (profile.orcid_link ?? null),
-      bio: profile.bio ?? [],
-      phone: profile.phone ?? undefined,
-      functions: profile.functions ?? [],
-      profile_url: profile.profile_url ?? undefined,
-      email: profile.email ?? undefined,
-      title: profile.title ?? undefined,
-    };
+  // 2) Find and set mainProfile
+  const found = allProfiles.find((p) => p.id === id);
+  if (found) {
+    mainProfile.value = { ...found };
   } else {
+    // No profile with that ID → reset and bail
     mainProfile.value = {
       id: 0,
       name: '',
       university: '',
       photo_url: null,
       orcid_link: null,
-      unit: [],
-      bio: [],
-      phone: undefined,
-      functions: [],
-      profile_url: undefined,
       email: undefined,
+      phone: undefined,
+      unit: [],
+      functions: undefined,
+      profile_url: undefined,
+      bio: undefined,
       title: undefined,
     };
-  }
-
-  // Compute similar profiles (shared units & name)
-  if (profile) {
-    const baseName = profile.name.toLowerCase().trim();
-    const baseUnits = profile.unit.map((u) => u.toLowerCase());
-
-    const scoredArray = data
-      .filter((p) => p.id !== profile.id)
-      .map((p) => {
-        // Shared units
-        const otherUnits = p.unit.map((u) => u.toLowerCase());
-        const sharedUnitCount = otherUnits.filter((u) => baseUnits.includes(u)).length;
-
-        // Name similarity (count of shared words)
-        const baseWords = baseName.split(/\s+/);
-        const otherName = p.name.toLowerCase().trim();
-        const otherWords = otherName.split(/\s+/);
-        const sharedWordsCount = baseWords.filter((w) => otherWords.includes(w)).length;
-
-        // Scoring: shared unit = 2 pts each, shared word = 1 pt each
-        const score = sharedUnitCount * 2 + sharedWordsCount;
-
-        return { profile: p, score };
-      })
-      .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
-      .map((item) => item.profile);
-
-    similarProfiles.value = scoredArray;
-  } else {
     similarProfiles.value = [];
+    return;
   }
+
+  // 3) Build a single “combined” search string from name, university, and units
+  const combinedQuery = [
+    mainProfile.value.name,
+    mainProfile.value.university,
+    ...(mainProfile.value.unit || []),
+  ]
+    .filter((s) => Boolean(s))
+    .join(' ');
+
+  // 4) Run Fuse search and filter out the main profile itself
+  const results = fuse!.search(combinedQuery, { limit: 10 });
+  similarProfiles.value = results
+    .map((res) => res.item)
+    .filter((p) => p.id !== mainProfile.value.id)
+    .slice(0, 10);
 }
 
-onMounted(loadProfile);
+onMounted(() => {
+  void loadProfile();
+});
 
 watch(
   () => route.params.id,
   () => {
     void loadProfile();
-  },
+  }
 );
 </script>

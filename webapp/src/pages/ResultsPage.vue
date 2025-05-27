@@ -63,7 +63,7 @@ const errorMsg = ref<string | null>(null);
 // The user's search query
 const query = ref<string>(route.query.q ? String(route.query.q) : '');
 
-// Our Fuse.js instance (fuse.value will be initialized once data is loaded)
+// Our Fuse.js instance (initialized once data is loaded)
 const fuse = ref<Fuse<Professor> | null>(null);
 
 // Whenever route.query.q changes, update query.value
@@ -88,15 +88,17 @@ onMounted(async () => {
       orcid_link: p.orcid_link ?? null,
     }));
 
-    // Initialize Fuse.js now that we have allProfs
+    // Initialize Fuse.js now that we have allProfs.
+    // We include `unit` (an array of strings) as a searchable field:
     fuse.value = new Fuse(allProfs.value, {
       keys: [
-        { name: 'name', weight: 0.7 },
-        { name: 'university', weight: 0.3 },
+        { name: 'name', weight: 0.6 },
+        { name: 'university', weight: 0.25 },
+        { name: 'unit', weight: 0.15 },
       ],
-      threshold: 0.4,      // Adjust between 0.0 (exact) and 1.0 (match all)
-      distance: 100,       // How far in the string to look
-      ignoreLocation: true // We don't care where in the string the match was
+      threshold: 0.4,      // Lower = stricter match; higher = more results
+      distance: 100,       // How far in the string to look for a match
+      ignoreLocation: true // Ignore “location” so matches anywhere in the field count
     });
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -111,19 +113,18 @@ onMounted(async () => {
 
 /**
  * filteredProfiles:
- *  - If query is empty → return first 200 from allProfs
+ *  - If query is empty → return the first 200 of allProfs
  *  - Otherwise → run fuse.search(query), extract `item`, then take top 200
  */
 const filteredProfiles = computed(() => {
   const q = query.value.trim();
   if (!q || !fuse.value) {
-    // No search term yet, or fuse not initialized
+    // No search term yet, or Fuse isn't initialized
     return allProfs.value.slice(0, 200);
   }
 
-  // Use Fuse.js to get fuzzy matches on `name` + `university`
-  const results = fuse.value.search(q, { limit: 50 });
-  // Each result is { item: Professor; refIndex: number; score: number }
+  // Use Fuse.js to get fuzzy matches on name, university, and unit
+  const results = fuse.value.search(q, { limit: 200 });
   return results.map((r) => r.item);
 });
 </script>
