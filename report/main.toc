@@ -2,6 +2,11 @@
 \contentsline {section}{\numberline {1}Background \& Motivation}{2}{section.1}%
 \contentsline {section}{\numberline {2}Related Work}{2}{section.2}%
 \contentsline {section}{\numberline {3}System Design Overview}{2}{section.3}%
-\contentsline {section}{\numberline {4}Technical Details}{2}{section.4}%
-\contentsline {section}{\numberline {5}Experiments and Results}{2}{section.5}%
-\contentsline {section}{\numberline {6}Conclusion \& Future Work}{2}{section.6}%
+\contentsline {subsection}{\numberline {3.1}Crawler}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Search Engine}{3}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Technical Details}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Search Algorithm}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Fuzzy Search}{5}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Implementation}{6}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Experiments and Results}{6}{section.5}%
+\contentsline {section}{\numberline {6}Conclusion \& Future Work}{7}{section.6}%

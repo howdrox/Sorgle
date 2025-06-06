@@ -1,1 +1,22 @@
 \section{Technical Details}
+
+The faster and more relevant a seach engine retrieves results, the better the user experience. In this section, we will discuss the technical details of our search algorithm.
+
+\subsection{Search Algorithm}
+
+The search algorithm is the core of the search engine. Instead of using basic string matching, we implemented a fuzzy search that allows for more flexibility. Fuzzy search is a technique that finds matches even when the search terms are not an exact match to the indexed data. This is particularly useful for names, which can have variations in spelling.
+
+\subsection{Fuzzy Search}
+
+The closeness of the search results is determined by the Levenshtein distance, which measures how many single-character edits (insertions, deletions, or substitutions) are required to change one word into another.
+\begin{itemize}
+    \item insertion: cot → coat
+    \item deletion: coat → cot
+    \item substitution: cot → cat
+\end{itemize}
+
+\subsection{Implementation}
+
+Fuzzy search was implemented on the name of the professors, their university and their department. Each with different weights. The name of the professor has the highest weight (0.6), followed by the university (0.25) and then the department (0.15). This means that if a user searches for a professor's name, the search engine will prioritize results that match the name over those that match the university or department. I chose these weights based on the importance of each field as well as how long the field is. The name is the most important field but also the shortest, the deparemnt could be very long and therefore I wanted to give it a lower weight as it may skew the results.
+
+The similar profiles are also determined by fuzzy search. This time the current profile's name, university and all department are used. The results are then sorted by the Levenshtein distance.
