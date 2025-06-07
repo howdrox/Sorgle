@@ -1,7 +1,21 @@
 \begin{thebibliography}{1}
 
-\bibitem{einstein1905}
-A.~Einstein, ``On the electrodynamics of moving bodies,'' {\em Annalen der
-  Physik}, vol.~17, pp.~891--921, 1905.
+\bibitem{contactout}
+{ContactOut}, ``Contactout.'' \url{https://contactout.com/}.
+\newblock Accessed: 2024-06-10.
+
+\bibitem{mrholmes}
+Y.~Wang and Y.~Li, ``{Mr.\,Holmes}.''
+  \url{https://github.com/Lucksi/Mr.Holmes}.
+\newblock GitHub repository, accessed June 7, 2025.
+
+\bibitem{linkedin2025}
+{LinkedIn Corporation}, ``{LinkedIn: Professional Networking Platform}.''
+  \url{https://www.linkedin.com/}, 2025.
+\newblock Accessed June 7, 2025.
+
+\bibitem{google2025}
+{Google LLC}, ``{Google Search}.'' \url{https://www.google.com/}, 2025.
+\newblock Accessed June 7, 2025.
 
 \end{thebibliography}

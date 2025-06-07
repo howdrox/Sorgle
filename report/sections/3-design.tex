@@ -6,7 +6,7 @@ Since we are a team of two, we decided to split the work into two parts: one per
 
 \subsection{Crawler}
 
-We both started by crawling our own universities, mine being INSA Lyon in France. I used \textbf{Selenium} to send requests and \textbf{BeautifulSoup} to parse the HTML content. \textbf{Selenium} was used because INSA Lyon's website is a single page application that only allows users to search people by name, as shown in \autoref{fig:insa_results_page}. This means that we cannot scrape the entire list of people from the website, but we can search for them by name. In the end, to get the full list of professors, I had to search through every two lettter combination of the alphabet (from "aa", "ab", "ac", ..., "zz") and store the results in a CSV file. Then clean it up by removing duplicates, students and staff.
+We both started by crawling our own universities, mine being INSA Lyon in France. I used \textbf{Selenium} to send requests and \textbf{BeautifulSoup} to parse the HTML content. \textbf{Selenium} was used because INSA Lyon's website is a single page application that only allows users to search people by name, as shown in \autoref{fig:insa_results_page}. This means that we cannot scrape the entire list of people from the website, but we can search for them by name. In the end, to get the full list of professors, I had to search through (with a rate limit to maintain politness) every two lettter combination of the alphabet (from "aa", "ab", "ac", ..., "zz") and store the results in a CSV file. Then clean it up by removing duplicates, students and staff.
 
 \begin{figure}[ht]
 	\centering
@@ -19,14 +19,14 @@ Now that I had data from my university, I wanted to start designing the layout o
 
 \subsection{Search Engine}
 
-I started by looking at different people search engines: LinkedIn, Instagram, Facebook, etc. I wanted to see how they display the results and what information they show. I also looked at different search engines such as Google to see how they display the results. Since the type of data we are dealing with is moslty related to the professors themselves, I wanted to display the name, title, and university of the professor as well as the picture if available. Therefore, I greatly inspired my design on LinkedIn's search results page (\autoref{fig:linkedin_results_page} and \autoref{fig:sorgle_results_page}) and its profile page (\autoref{fig:linkedin_profile_page} and \autoref{fig:sorgle_profile_page}).
+I started by looking at different people search engines: LinkedIn, Instagram, Facebook, etc. I wanted to see how they display the results and what information they show. I also looked at different search engines such as Google to see how they display the results. Since the type of data we are dealing with is mostly related to the professors themselves, I wanted to display the name, title, and university of the professor as well as the picture if available. Therefore, I greatly inspired my design on LinkedIn's search results page (\autoref{fig:linkedin_results_page}~\cite{linkedin2025} and \autoref{fig:sorgle_results_page}) and its profile page (\autoref{fig:linkedin_profile_page}~\cite{linkedin2025} and \autoref{fig:sorgle_profile_page}).
 
 \begin{figure}[ht]
 	\centering
 	\begin{minipage}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{linkedin-results-page.png}
-		\caption{LinkedIn Results Page}
+		\caption{LinkedIn Results Page \cite{linkedin2025}}
 		\label{fig:linkedin_results_page}
 	\end{minipage}\hfill
 	\begin{minipage}{0.48\textwidth}
@@ -42,7 +42,7 @@ I started by looking at different people search engines: LinkedIn, Instagram, Fa
 	\begin{minipage}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{linkedin-profile-page.png}
-		\caption{LinkedIn Profile Page}
+		\caption{LinkedIn Profile Page \cite{linkedin2025}}
 		\label{fig:linkedin_profile_page}
 	\end{minipage}\hfill
 	\begin{minipage}{0.48\textwidth}
@@ -71,12 +71,12 @@ To display this information wihtout clutering the screen too much, I used logos 
 
 Lastly, the main page was inspired by Google's main page, this is coherent with my goal of having a simple and clean design.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\begin{minipage}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{google-main-page.png}
-		\caption{Google Main Page}
+		\caption{Google Main Page \cite{google2025}}
 		\label{fig:google_main_page}
 	\end{minipage}\hfill
 	\begin{minipage}{0.48\textwidth}

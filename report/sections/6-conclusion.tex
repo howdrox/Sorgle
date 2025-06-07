@@ -1,1 +1,21 @@
 \section{Conclusion \& Future Work}
+
+We have presented a search engine that allows users to find professors based on their names, universities, and departments. However, there are several areas for improvement and future work.
+
+\subsection{Future Work}
+
+The biggest limitation of our search engine is the lack of data. We only have a small subset of professors from four universities, which limits the search engine's effectiveness. To improve the search engine, we need to crawl more universities and gather more data. Not only the number of professors but also more fields such as research interests, publications, and full contact information would be beneficial. The easiest way to do this, would be to use the ORCID API, which provides a wealth of information about researchers, including their publications and affiliations.
+
+Moreover, the search engine could be enhanced by implementing more advanced search features, such as filtering by research interests, publications or their role (eg: teacher, researcher, etc.). This would also have to be implemented for the similar profiles. However, I'm not sure if fuzzy search would be enough for the more advanced search features, setting up the weights for each field and the search algorithm would be a complex task.
+
+Another simple but effective improvement would be to add an autocomplete feature to the search bar. Moreover, the current system stores all the data in a single json file. Creating a dedicated backend with a database would allow for more efficient data management and retrieval. This would allow us to implement profile views, top searched professors, and account management features.
+
+Lastly, we have done minimal treatment to the data we crawled. One example is the names of the departments, which are often not standardized. For example, at INSA Lyon we have "Computer Science", at Tsinghua University we have "Department of Computer Science and Technology", and at Imperial College London we have "Department of Computing". Standardizing these names would improve the search engine's effectiveness as well as the user experience (especially for the similar profiles section).
+
+\subsection{Conclusion}
+
+In conclusion, we have built a simple search engine that allows users to find professors based on their names, universities, and departments. The search engine is functional and provides a good user experience, but there is still much work to be done to improve it. We hope that this project will serve as a foundation for future work in this area and that it will inspire others to build similar systems.
+
+\subsection{Ethical Use \& Privacy.}
+
+All data we collect is publicly accessible. We do not scrape any password‐protected or user‐locked content. We also do not store or display student names—only faculty. Users of Sorgle must not use this information to spam or harass.
