@@ -1,26 +1,26 @@
 \section{Technical Details}
 
-The faster and more relevant a search engine retrieves results, the better the user experience. In this section, we will discuss the technical details of our search algorithm.
+Efficient and relevant retrieval is crucial for user satisfaction. Below, we outline our search-algorithm design.
 
 \subsection{Search Algorithm}
 
-The search algorithm is the core of the search engine. Instead of using basic string matching, we implemented a fuzzy search that allows for more flexibility. Fuzzy search is a technique that finds matches even when the search terms are not an exact match to the indexed data. This is particularly useful for names, which can have variations in spelling.
+We use a fuzzy matching approach rather than exact string match. Fuzzy search handles variations and typos, which is essential for name based queries.
 
 \subsection{Fuzzy Search}
 
-The closeness of the search results is determined by the Levenshtein distance, which measures how many single-character edits (insertions, deletions, or substitutions) are required to change one word into another.
+We measure similarity via the Levenshtein distance, defined as the minimum number of single character edits (insertions, deletions, or substitutions) needed to transform one string into another:
 \begin{itemize}
-    \item insertion: cot → coat
-    \item deletion: coat → cot
-    \item substitution: cot → cat
+    \item insertion: \texttt{cot}~$\to$~\texttt{coat}
+    \item deletion: \texttt{coat}~$\to$~\texttt{cot}
+    \item substitution: \texttt{cot}~$\to$~\texttt{cat}
 \end{itemize}
 
 \subsection{Implementation}
 
-Fuzzy search was implemented on the name of the professors, their university and their department. Each with different weights. The name of the professor has the highest weight, followed by the university and then the department.
+We compute a weighted distance over three fields: name ($d_{\mathrm{name}}$), university ($d_{\mathrm{univ}}$), and department ($d_{\mathrm{dept}}$). The combined score is
 \[
-  \text{score}(query, profile) \;=\; 0.6\,d_\text{name} \;+\; 0.25\,d_\text{univ} \;+\; 0.15\,d_\text{dept}\,,
+  \text{score} = 0.6\,d_{\mathrm{name}} \;+\; 0.25\,d_{\mathrm{univ}} \;+\; 0.15\,d_{\mathrm{dept}}\,.
 \]
-This means that if a user searches for a professor's name, the search engine will prioritize results that match the name over those that match the university or department. I chose these weights based on the importance of each field as well as how long the field is. The name is the most important field but also the shortest, the deparemnt could be very long and therefore I wanted to give it a lower weight as it may skew the results.
+Higher weights for names reflect their shorter length and greater importance. University and department fields receive lower weights to prevent overly long strings from dominating the score.
 
-The similar profiles are also determined by fuzzy search. This time the current profile's name, university and all department are used. The results are then sorted by the Levenshtein distance.
+For \emph{similar profiles}, we compute the same weighted distance between the current profile and all others, then sort by increasing score.

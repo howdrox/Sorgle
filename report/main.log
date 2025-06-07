@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2025.2.3)  7 JUN 2025 10:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2025.2.3)  7 JUN 2025 15:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -442,100 +442,97 @@ File: img/sorgle_full.png Graphic file (type png)
 Package pdftex.def Info: img/sorgle_full.png  used on input line 11.
 (pdftex.def)             Requested size: 195.0pt x 82.87364pt.
 ) (sections/2-related-work.tex
-
-[2
-
- <./img/sorgle_full.png>]
 LaTeX Font Info:    Trying to load font information for OT1+lmtt on input line 8.
  (C:\Users\louis\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmtt.fd
 File: ot1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)) (sections/3-design.tex
-<img/insa-results-page.png, id=97, 1403.99532pt x 959.83594pt>
+)
+
+[2
+
+{C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rmtt.enc} <./img/sorgle_full.png>]) (sections/3-design.tex
+<img/insa-results-page.png, id=98, 1403.99532pt x 959.83594pt>
 File: img/insa-results-page.png Graphic file (type png)
 <use img/insa-results-page.png>
-Package pdftex.def Info: img/insa-results-page.png  used on input line 13.
+Package pdftex.def Info: img/insa-results-page.png  used on input line 11.
 (pdftex.def)             Requested size: 272.99881pt x 186.63268pt.
 
 
-[3{C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rmtt.enc}]
-<img/linkedin-results-page.png, id=110, 1285.05093pt x 890.5772pt>
+[3 <./img/insa-results-page.png>]
+<img/linkedin-results-page.png, id=112, 1285.05093pt x 890.5772pt>
 File: img/linkedin-results-page.png Graphic file (type png)
 <use img/linkedin-results-page.png>
-Package pdftex.def Info: img/linkedin-results-page.png  used on input line 28.
+Package pdftex.def Info: img/linkedin-results-page.png  used on input line 26.
 (pdftex.def)             Requested size: 187.19833pt x 129.72151pt.
-<img/sorgle-results-page.png, id=113, 1248.91594pt x 780.66656pt>
+<img/sorgle-results-page.png, id=115, 1248.91594pt x 780.66656pt>
 File: img/sorgle-results-page.png Graphic file (type png)
 <use img/sorgle-results-page.png>
-Package pdftex.def Info: img/sorgle-results-page.png  used on input line 34.
+Package pdftex.def Info: img/sorgle-results-page.png  used on input line 32.
 (pdftex.def)             Requested size: 187.19833pt x 117.01154pt.
-<img/linkedin-profile-page.png, id=114, 1606.0pt x 717.68124pt>
+<img/linkedin-profile-page.png, id=116, 1606.0pt x 717.68124pt>
 File: img/linkedin-profile-page.png Graphic file (type png)
 <use img/linkedin-profile-page.png>
-Package pdftex.def Info: img/linkedin-profile-page.png  used on input line 44.
+Package pdftex.def Info: img/linkedin-profile-page.png  used on input line 42.
 (pdftex.def)             Requested size: 187.19833pt x 83.65407pt.
-<img/sorgle-profile-page.png, id=117, 1668.2325pt x 813.0375pt>
+<img/sorgle-profile-page.png, id=119, 1668.2325pt x 813.0375pt>
 File: img/sorgle-profile-page.png Graphic file (type png)
 <use img/sorgle-profile-page.png>
-Package pdftex.def Info: img/sorgle-profile-page.png  used on input line 50.
+Package pdftex.def Info: img/sorgle-profile-page.png  used on input line 48.
 (pdftex.def)             Requested size: 187.19833pt x 91.23326pt.
-
-
-[4 <./img/insa-results-page.png> <./img/linkedin-results-page.png> <./img/sorgle-results-page.png>]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 60.
- (C:\Users\louis\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
-File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-<img/google-main-page.png, id=128, 892.83563pt x 380.17032pt>
+<img/google-main-page.png, id=120, 892.83563pt x 380.17032pt>
 File: img/google-main-page.png Graphic file (type png)
 <use img/google-main-page.png>
-Package pdftex.def Info: img/google-main-page.png  used on input line 78.
+Package pdftex.def Info: img/google-main-page.png  used on input line 62.
 (pdftex.def)             Requested size: 187.19833pt x 79.7047pt.
-<img/sorgle-main-page.png, id=131, 913.16156pt x 470.50781pt>
+<img/sorgle-main-page.png, id=123, 913.16156pt x 470.50781pt>
 File: img/sorgle-main-page.png Graphic file (type png)
 <use img/sorgle-main-page.png>
-Package pdftex.def Info: img/sorgle-main-page.png  used on input line 84.
+Package pdftex.def Info: img/sorgle-main-page.png  used on input line 68.
 (pdftex.def)             Requested size: 187.19833pt x 96.44754pt.
 ) (sections/4-technical-details.tex
 
-[5{C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc} <./img/linkedin-profile-page.png> <./img/sorgle-profile-page.png>]
+[4 <./img/linkedin-results-page.png> <./img/sorgle-results-page.png> <./img/linkedin-profile-page.png> <./img/sorgle-profile-page.png>]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 13.
+ (C:\Users\louis\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)) (sections/5-results.tex
 
-[6{C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc} <./img/google-main-page.png> <./img/sorgle-main-page.png>]) (sections/5-results.tex
-<img/num_professors_by_uni.png, id=150, 714.7503pt x 354.123pt>
+[5{C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc} <./img/google-main-page.png> <./img/sorgle-main-page.png>]
+<img/num_professors_by_uni.png, id=148, 714.7503pt x 354.123pt>
 File: img/num_professors_by_uni.png Graphic file (type png)
 <use img/num_professors_by_uni.png>
-Package pdftex.def Info: img/num_professors_by_uni.png  used on input line 9.
+Package pdftex.def Info: img/num_professors_by_uni.png  used on input line 7.
 (pdftex.def)             Requested size: 272.99881pt x 135.25977pt.
-<img/most-common-first-names.png, id=151, 570.933pt x 281.853pt>
+<img/most-common-first-names.png, id=149, 570.933pt x 281.853pt>
 File: img/most-common-first-names.png Graphic file (type png)
 <use img/most-common-first-names.png>
-Package pdftex.def Info: img/most-common-first-names.png  used on input line 16.
+Package pdftex.def Info: img/most-common-first-names.png  used on input line 14.
 (pdftex.def)             Requested size: 272.99881pt x 134.77611pt.
 ) (sections/6-conclusion.tex
 
-[7 <./img/num_professors_by_uni.png>]
+[6 <./img/num_professors_by_uni.png> <./img/most-common-first-names.png>]) (main.bbl
 
-[8 <./img/most-common-first-names.png>]) (main.bbl)
+[7])
 
-[9] (main.aux)
+[8] (main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 8284051CA03B8E19DA280313B7D546FA;1912.
+(rerunfilecheck)             Checksum: DB0394E636DF50708BD005CC49E31F4E;1907.
  ) 
 Here is how much of TeX's memory you used:
- 12763 strings out of 473530
- 209661 string characters out of 5714795
+ 12765 strings out of 473530
+ 209690 string characters out of 5714795
  603323 words of memory out of 5000000
- 35741 multiletter control sequences out of 15000+600000
- 604782 words of font info for 77 fonts, out of 8000000 for 9000
+ 35742 multiletter control sequences out of 15000+600000
+ 609000 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,8n,82p,859b,469s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
-Output written on main.pdf (9 pages, 3650580 bytes).
+ 80i,8n,82p,769b,572s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/louis/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
+Output written on main.pdf (8 pages, 3665244 bytes).
 PDF statistics:
- 227 PDF objects out of 1000 (max. 8388607)
- 37 named destinations out of 1000 (max. 500000)
+ 231 PDF objects out of 1000 (max. 8388607)
+ 36 named destinations out of 1000 (max. 500000)
  163 words of extra memory for PDF output out of 10000 (max. 10000000)
 

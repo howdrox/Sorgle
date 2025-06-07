@@ -1,12 +1,10 @@
 \section{System Design Overview}
 
-A search engine is a system that allows users to search for information on the internet. It consists of two main components: a crawler and a search engine. The crawler is responsible for collecting data from the internet, while the search engine is responsible for searching and displaying that data.
-
-Since we are a team of two, we decided to split the work into two parts: one person will work on the crawler and the other person will work on the search engine. This way, we can work in parallel and complete the project faster.
+A search engine comprises two components: a \emph{crawler} that collects data and an \emph{indexer\slash search component} that retrieves and displays results. To parallelize development, one team member built the crawler while the other implemented the search interface.
 
 \subsection{Crawler}
 
-We both started by crawling our own universities, mine being INSA Lyon in France. I used \textbf{Selenium} to send requests and \textbf{BeautifulSoup} to parse the HTML content. \textbf{Selenium} was used because INSA Lyon's website is a single page application that only allows users to search people by name, as shown in \autoref{fig:insa_results_page}. This means that we cannot scrape the entire list of people from the website, but we can search for them by name. In the end, to get the full list of professors, I had to search through (with a rate limit to maintain politness) every two lettter combination of the alphabet (from "aa", "ab", "ac", ..., "zz") and store the results in a CSV file. Then clean it up by removing duplicates, students and staff.
+We both started by crawling our own universities, mine being INSA Lyon in France. I used \textbf{Selenium} to send requests and \textbf{BeautifulSoup} to parse the HTML content. \textbf{Selenium} was used because INSA Lyon's website is a single page application that only allows users to search people by name, as shown in \autoref{fig:insa_results_page}. This means that we cannot scrape the entire list of people from the website, but we can search for them by name. To collect all professor listings, we queried every two letter combination (``aa,'' ``ab,'' …, ``zz'') with a polite rate limit, saved results to CSV, and filtered out duplicates, students, and staff.
 
 \begin{figure}[ht]
 	\centering
@@ -15,11 +13,11 @@ We both started by crawling our own universities, mine being INSA Lyon in France
 	\label{fig:insa_results_page}
 \end{figure}
 
-Now that I had data from my university, I wanted to start designing the layout of the search engine. I wanted to have a simple and clean design that would allow users to easily search for professors
+Now that I had data from my university, I started designing the layout of the search engine. I wanted a simple and clean design.
 
 \subsection{Search Engine}
 
-I started by looking at different people search engines: LinkedIn, Instagram, Facebook, etc. I wanted to see how they display the results and what information they show. I also looked at different search engines such as Google to see how they display the results. Since the type of data we are dealing with is mostly related to the professors themselves, I wanted to display the name, title, and university of the professor as well as the picture if available. Therefore, I greatly inspired my design on LinkedIn's search results page (\autoref{fig:linkedin_results_page}~\cite{linkedin2025} and \autoref{fig:sorgle_results_page}) and its profile page (\autoref{fig:linkedin_profile_page}~\cite{linkedin2025} and \autoref{fig:sorgle_profile_page}).
+I started by looking at different people search engines: LinkedIn, Instagram, Facebook, etc. I wanted to see how they display the results and what information they show. I also looked at different search engines such as Google to see how they display the results. Since our data is professor-centric, each result displays name, title, university, department, and—if available—a profile picture. We modeled Sorgle's layout on LinkedIn's search results (\autoref{fig:linkedin_results_page}~\cite{linkedin2025} vs \autoref{fig:sorgle_results_page}) and profile page (\autoref{fig:linkedin_profile_page}~\cite{linkedin2025} vs. \autoref{fig:sorgle_profile_page}).
 
 \begin{figure}[ht]
 	\centering
@@ -53,23 +51,9 @@ I started by looking at different people search engines: LinkedIn, Instagram, Fa
 	\end{minipage}
 \end{figure}
 
-For the results page, I wanted to keep the design simple and clean, with a search bar at the top and the results displayed below it. I kept the information display very brief; the name, university and department because this is the data that all profiles have in common. I also really liked LinkedIn's color scheme. Even thought I set all my apps to dark mode, I think that light mode allows for a better looking website.
+Results pages feature a top aligned search bar with concise entries (name, university, department) and a light mode color scheme inspired by LinkedIn. Even thought I set all my apps to dark mode, I think that light mode allows for a better looking website. Profile pages display all scraped fields - name, university, department, profile picture, phone, functions, ORCID, and bio - using icons to avoid clutter. We also added a \emph{similar profiles} sidebar to utilize empty space and improve user retention.
 
-For the profile page, I wanted to display more information about the professor, basically all the information that I could scrape from the university's website. This includes:
-\begin{itemize}
-	\item Name
-	\item University
-	\item Department
-	\item Profile picture
-	\item Phone number
-	\item Functions
-	\item ORCID
-	\item Bio
-\end{itemize}
-
-To display this information wihtout clutering the screen too much, I used logos that could best describe each field. Next, I really liked the idea of having similar profiles. This fills in the empty space on the right side of the page and allows users to use the search engine more efficiently (essentially increasing retention rate).
-
-Lastly, the main page was inspired by Google's main page, this is coherent with my goal of having a simple and clean design.
+Finally, Sorgle's homepage mimics Google's minimalistic design to maintain simplicity and consistency.
 
 \begin{figure}[ht]
 	\centering

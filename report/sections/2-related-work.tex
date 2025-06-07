@@ -1,13 +1,13 @@
 \section{Related Work}
 
-When the idea of the project hatched, we were thinking of OSINT (Open Source Intelligence) tools that allow users to search for people. This is a common practice in the field of cybersecurity, where professionals often need to gather information about individuals or organizations from publicly available sources. We found ContactOut \cite{contactout}, a website that essentially scrapes LinkedIn profiles and provides contact information for individuals. 
+Early inspiration came from OSINT (Open Source Intelligence) tools used in cybersecurity to gather publicly available personal data. For example, ContactOut \cite{contactout} scrapes LinkedIn profiles to provide email addresses and phone numbers. 
 
-Another notable OSINT tool is Mr.Holmes \cite{mrholmes}, which is designed to automate the process of gathering intelligence from various online sources. Mr.Holmes aggregates data from social media platforms, public records, and other web resources to help users build comprehensive profiles on individuals or organizations. Its modular architecture allows for the integration of new data sources, making it a flexible and extensible solution for OSINT investigations. The tool is widely used by cybersecurity professionals and investigators for its efficiency and breadth of coverage.
+Another notable OSINT tool is Mr.Holmes \cite{mrholmes}, which is designed to automate the process of gathering intelligence from various online sources. Mr.Holmes aggregates data from social media platforms, public records, and other web resources.
 
-However, a big part of Mr.Holmes is the use of google dorking, which is a technique that uses advanced search operators to find specific information on the web. For example, a typical dork query to find publicly available PDF files on a specific domain might look like:
+However, a big part of Mr.Holmes is the use of google dorking, which is a technique that uses advanced search operations to find specific information on the web. For example, a typical dork query to find publicly available PDF files on a specific domain might look like:
 \begin{verbatim}
 site:example.com filetype:pdf
 \end{verbatim}
-This technique uses an already existing search engine, and it wouldn't make sense to build a new search engine that relies on it.
+This technique uses an already existing search engine, and it wouldn't make sense to build a new search engine that relies heavily on it.
 
 
